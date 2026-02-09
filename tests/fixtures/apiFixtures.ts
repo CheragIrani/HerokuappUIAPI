@@ -1,0 +1,82 @@
+import {test as base, expect} from '@playwright/test'
+import { ContactApi } from '../../api/contact.api'
+import { UsersApi } from '../../api/users.api'
+import { UserPayload } from '../../data/addUserPayload'
+import { ContactPayload } from '../../data/contactPayload'
+import { ContactPage } from '../../pages/contact.page'
+import { LoginPage } from '../../pages/login.page'
+import { RegistrationPage } from '../../pages/registration.page'
+
+type Fixtures = {
+    token: string,
+    usersApi: UsersApi
+    contactApi: ContactApi
+    userPayload: UserPayload
+    contactPayload: ContactPayload
+    registrationPage: RegistrationPage
+    loginPage: LoginPage
+    contactPage: ContactPage
+    
+}
+
+export const test = base.extend<Fixtures>({
+    userPayload: async({}, use) => {
+        let userPayload: UserPayload = {
+            firstName: 'Test',
+            lastName: 'User',
+            email: `test4523${Date.now()}@fake.com`,
+            password: 'myPassword'
+        }
+        await use(userPayload)
+
+    },
+    contactPayload: async({}, use) => {
+        let contactPayload: ContactPayload = {
+            firstName: "John",
+            lastName: "Doe",
+            birthdate: "1970-01-01",
+            email: `jdoe${Date.now()}@fake.com`,
+            phone: "8005555555",
+            street1: "1 Main St.",
+            street2: "Apartment A",
+            city: "Anytown",
+            stateProvince: "KS",
+            postalCode: "12345",
+            country: "USA"
+
+        }
+        await use(contactPayload);
+
+    },
+    token: async({request, userPayload}, use) => {
+        let userApi = new UsersApi(request, '');
+        let addUserResp = await userApi.addUser(userPayload);
+        let token = addUserResp.token;
+        await use(token)
+    },
+    usersApi: async({request,token}, use) => {
+        let userApi = new UsersApi(request, token);
+        await use(userApi);
+        await userApi.deleteUser();
+    },
+    contactApi: async({request, token}, use) => {
+        let contactApi = new ContactApi(request, token);
+        await use(contactApi);
+    },
+    registrationPage: async ({page}, use) => {
+        const registraionPage = new RegistrationPage(page)
+        await use(registraionPage)
+    },
+    loginPage: async ({page}, use) => {
+        const loginPage = new LoginPage(page)
+        await use(loginPage)
+    },
+    contactPage: async ({page}, use) => {
+        const contactPage = new ContactPage(page)
+        await use(contactPage)
+    },
+    
+
+
+})
+export {expect}
