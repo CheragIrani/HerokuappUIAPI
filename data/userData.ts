@@ -9,15 +9,3 @@ export interface AddUserResponse{
     token: string
 
 }
-
-export interface DeleteUserResponse{
-    
-}
-
-export interface LoginUserResponse{
-    
-}
-
-export interface LogoutUserResponse{
-    
-}
