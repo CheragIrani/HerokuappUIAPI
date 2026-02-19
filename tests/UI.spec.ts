@@ -1,4 +1,3 @@
-import { UsersApi } from '../api/users.api';
 import { test, expect } from './fixtures/apiFixtures';
 
 test.describe('Creating contacts test', async () => {
@@ -17,14 +16,14 @@ test.describe('Creating contacts test', async () => {
 
   test('Create contact', async ({page, token, contactPage, contactApi, contactPayload}) => {
     await page.context().addCookies([
-        { name: 'token', 
-          value: `${token}`, 
-          url: 'https://thinking-tester-contact-list.herokuapp.com',
-          secure: true,
-          httpOnly: false,
-          sameSite: 'Lax' 
-        }
-      ])
+      { name: 'token', 
+        value: `${token}`, 
+        url: 'https://thinking-tester-contact-list.herokuapp.com',
+        secure: true,
+        httpOnly: false,
+        sameSite: 'Lax' 
+      }
+    ])
     
     await page.goto('https://thinking-tester-contact-list.herokuapp.com/contactList');
     const fullName: string = `${contactPayload.firstName} ${contactPayload.lastName}`
