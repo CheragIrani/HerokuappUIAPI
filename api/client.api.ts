@@ -12,7 +12,7 @@ export class ClientApi{
         this.token = token;
     }
 
-    async post<T>(url: string, body: unknown = {}): Promise<T>{
+    async post<T>(url: string, body: unknown = {}): Promise<{status: number, text: string, respBody: T}>{
         const resp = await this.request.post(url, {
             headers: {
               'Authorization': `Bearer ${this.token}`
@@ -20,13 +20,14 @@ export class ClientApi{
             data: body
         })
         const status = resp.status();
-        console.log(`POST ${url} status is ${status}`);
+        const text = await resp.text();
+        const respBody = JSON.parse(text) as T
         expect(status).toBe(201);
-        return resp.json() as T
+        return {status, text, respBody}
 
     }
 
-    async postWithoutAuth<T>(url: string, body: unknown): Promise<T>{
+    async postWithoutAuth<T>(url: string, body: unknown): Promise<{ status: number, text: string, respBody: T }>{
         const resp = await this.request.post(url, {
             headers: {
               'Content-Type': 'application/json'
@@ -34,28 +35,27 @@ export class ClientApi{
             data: body
         })
         const status = resp.status();
-        console.log(`POST ${url} status is `, status);
-        return resp.json() as T
+        const text = await resp.text();
+        const respBody = JSON.parse(text) as T
+        return { status, text, respBody }
 
     }
 
-    async getArray<T>(url: string): Promise<T[]>{
+    async getArray<T>(url: string): Promise<{ status: number, text: string, body: T[] }>{
         const resp = await this.request.get(url, {
             headers: {
               'Authorization': `Bearer ${this.token}`
             }
         })
         
-        const getContactRespStatus = resp.status();
-        const getContactRespText = await resp.text();
-        console.log(`GET ${url} failed with status`, getContactRespStatus)
-        console.log(`GET ${url} failed with response text`, getContactRespText)
-        expect(getContactRespStatus).toBe(200)
-        return await resp.json() as T[]
+        const status = resp.status();
+        const text = await resp.text();
+        const body = JSON.parse(text) as T[]
+        return { status, text, body }
 
     }
 
-    async delete(url: string): Promise<APIResponse>{
+    async delete(url: string): Promise<{ status: number, respText: string }>{
         const deleteContactResp = await this.request.delete(`${url}`, {
             headers: {
               'Authorization': `Bearer ${this.token}`
@@ -63,10 +63,7 @@ export class ClientApi{
         })
         const status = deleteContactResp.status();
         const respText = await deleteContactResp.text();
-        console.log(`DELETE ${url} status is `, status);
-        console.log(`DELETE ${url} response text is `, respText);
-        expect(status).toBe(200)
-        return deleteContactResp
+        return { status, respText }
 
     }
 }

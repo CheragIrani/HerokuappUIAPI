@@ -37,7 +37,7 @@ export const test = base.extend<Fixtures>({
         let userApi = new UsersApi(request);
         await userApi.addUser(userPayload);
         const loginResp = await userApi.login(userPayload)
-        let token = loginResp.token;
+        let token = loginResp.respBody.token;
         await use(token)
     },
     usersApi: async({request,token}, use) => {

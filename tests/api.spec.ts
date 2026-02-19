@@ -6,20 +6,20 @@ test.describe('users tests', async () => {
   
     test('Login', async ({ usersApi, userPayload }) => {
       const resp = await usersApi.login(userPayload)
-      expect(resp.token).toBeTruthy();
-      expect(typeof resp.token).toBe('string');
+      expect(resp.respBody.token).toBeTruthy();
+      expect(typeof resp.respBody.token).toBe('string');
     })
 
     test('Create a contact', async ({ contactApi, contactPayload }) => {
       let contactId: string
       
       //create contact
-      const createContactBody: GetAddContactResponse = await contactApi.addContact(contactPayload);
-      contactId = createContactBody._id;
+      const createContactBody: { status: number, text: string, respBody: GetAddContactResponse } = await contactApi.addContact(contactPayload);
+      contactId = createContactBody.respBody._id;
 
       //get contact
-      const getContactRespBody: GetAddContactResponse[] = await contactApi.getContact();
-      const isId = getContactRespBody.find(c => c._id == contactId);
+      const getContactRespBody: GetAddContactResponse[] = (await contactApi.getContact()).body;
+      const isId = getContactRespBody.find(c => c._id === contactId);
       expect(isId).toBeDefined()
 
     });
@@ -28,14 +28,14 @@ test.describe('users tests', async () => {
       let contactId: string
       
       // add contact
-      const createContactBody: GetAddContactResponse = await contactApi.addContact(contactPayload);
+      const createContactBody: GetAddContactResponse = (await contactApi.addContact(contactPayload)).respBody;
       contactId = createContactBody._id;
 
       // delete contact
       await contactApi.deleteContact(contactId);
 
       //get contact
-      const getContactRespBody: GetAddContactResponse[] = await contactApi.getContact();
+      const getContactRespBody: GetAddContactResponse[] = (await contactApi.getContact()).body;
       const isId = getContactRespBody.find(c => c._id == contactId);
       expect(isId).toBeUndefined()
 
