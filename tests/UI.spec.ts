@@ -35,10 +35,7 @@ test.describe('Creating contacts test', async () => {
     const contactId = contact?._id
     expect(contactId).not.toBeNull()
     await contactApi.deleteContact(contactId!)
-
-
   })
-
 
 
 })
