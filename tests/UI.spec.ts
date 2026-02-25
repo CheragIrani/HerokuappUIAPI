@@ -15,6 +15,7 @@ test.describe('Creating contacts test', async () => {
   });
 
   test('Create contact', async ({page, token, contactPage, contactApi, contactPayload}) => {
+    //adding token as cookie to skip login
     await page.context().addCookies([
       { name: 'token', 
         value: `${token}`, 
