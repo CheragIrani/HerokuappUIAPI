@@ -26,7 +26,7 @@ test.describe('Creating contacts test', async () => {
       }
     ])
     
-    await page.goto('https://thinking-tester-contact-list.herokuapp.com/contactList');
+    await page.goto('/contactList');
     const fullName: string = `${contactPayload.firstName} ${contactPayload.lastName}`
     await contactPage.clickAddContact();
     await contactPage.addContactDetails(contactPayload);
